@@ -30,6 +30,7 @@
                         <input type="number" name="cantidad" min="1" placeholder="Ej. 2" required>
                     </label>
                 </div>
+                <input type="hidden" name="id_pedido">
                 <button type="submit">Actualizar inventario</button>
             </form>
         </section>
@@ -66,35 +67,7 @@
                             <th>Acción</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr data-pedido="PED-001" data-restaurante="1" data-producto="101" data-cantidad="2">
-                            <td>#PED-001</td>
-                            <td class="order-restaurant">1</td>
-                            <td class="order-product">101</td>
-                            <td class="order-units">2</td>
-                            <td><span class="order-status">Pendiente</span></td>
-                            <td class="order-time">-</td>
-                            <td><button class="table-action" type="button" data-restaurante="1" data-producto="101" data-cantidad="2">Actualizar pedido</button></td>
-                        </tr>
-                        <tr data-pedido="PED-002" data-restaurante="2" data-producto="205" data-cantidad="4">
-                            <td>#PED-002</td>
-                            <td class="order-restaurant">2</td>
-                            <td class="order-product">205</td>
-                            <td class="order-units">4</td>
-                            <td><span class="order-status">Pendiente</span></td>
-                            <td class="order-time">-</td>
-                            <td><button class="table-action" type="button" data-restaurante="2" data-producto="205" data-cantidad="4">Actualizar pedido</button></td>
-                        </tr>
-                        <tr data-pedido="PED-003" data-restaurante="3" data-producto="310" data-cantidad="1">
-                            <td>#PED-003</td>
-                            <td class="order-restaurant">3</td>
-                            <td class="order-product">310</td>
-                            <td class="order-units">1</td>
-                            <td><span class="order-status">Pendiente</span></td>
-                            <td class="order-time">-</td>
-                            <td><button class="table-action" type="button" data-restaurante="3" data-producto="310" data-cantidad="1">Actualizar pedido</button></td>
-                        </tr>
-                    </tbody>
+                    <tbody id="pedidos-body"></tbody>
                 </table>
             </div>
         </section>
@@ -104,14 +77,8 @@
         const form = document.getElementById('inventario-form');
         const respuesta = document.getElementById('respuesta');
         const estado = document.getElementById('estado');
-        let pedidosGuardados = {};
+        const pedidosBody = document.getElementById('pedidos-body');
         let pedidoSeleccionado = null;
-
-        try {
-            pedidosGuardados = JSON.parse(localStorage.getItem('pedidosInventario') || '{}');
-        } catch (error) {
-            localStorage.removeItem('pedidosInventario');
-        }
 
         const marcarPedidoActualizado = (datos, hora, pedido = pedidoSeleccionado) => {
             const fila = pedido || document.querySelector(
@@ -136,21 +103,37 @@
             boton.disabled = false;
         };
 
-        document.querySelectorAll('tbody tr[data-pedido]').forEach((fila) => {
-            const pedidoGuardado = pedidosGuardados[fila.dataset.pedido];
-            if (pedidoGuardado) {
-                marcarPedidoActualizado(pedidoGuardado.datos, pedidoGuardado.hora, fila);
-            }
-        });
-
-        document.querySelectorAll('.table-action').forEach((button) => {
+        const conectarBotones = () => document.querySelectorAll('.table-action').forEach((button) => {
             button.addEventListener('click', () => {
                 pedidoSeleccionado = button.closest('tr');
+                form.id_pedido.value = pedidoSeleccionado.dataset.pedido;
                 form.id_restaurante.value = button.dataset.restaurante;
                 form.id_producto.value = button.dataset.producto;
                 form.cantidad.value = button.dataset.cantidad;
                 form.scrollIntoView({ behavior: 'smooth', block: 'center' });
             });
+        });
+
+        const cargarPedidos = async () => {
+            const response = await fetch('pedidos.php');
+            const resultado = await response.json();
+            pedidosBody.innerHTML = resultado.datos.map((pedido) => `
+                <tr data-pedido="${pedido.id}" data-restaurante="${pedido.id_restaurante}" data-producto="${pedido.id_producto}" data-cantidad="${pedido.cantidad}">
+                    <td>#${pedido.id}</td>
+                    <td class="order-restaurant">${pedido.id_restaurante}</td>
+                    <td class="order-product">${pedido.id_producto}</td>
+                    <td class="order-units">${pedido.cantidad}</td>
+                    <td><span class="order-status ${pedido.estado === 'Actualizado' ? 'order-status-success' : ''}">${pedido.estado}</span></td>
+                    <td class="order-time">${pedido.actualizado_en || '-'}</td>
+                    <td><button class="table-action" type="button" data-restaurante="${pedido.id_restaurante}" data-producto="${pedido.id_producto}" data-cantidad="${pedido.cantidad}">${pedido.estado === 'Actualizado' ? 'Actualizar de nuevo' : 'Actualizar pedido'}</button></td>
+                </tr>
+            `).join('');
+            document.querySelector('.record-count').textContent = `${resultado.datos.length} pedidos`;
+            conectarBotones();
+        };
+
+        cargarPedidos().catch(() => {
+            pedidosBody.innerHTML = '<tr><td colspan="7">No se pudieron cargar los pedidos.</td></tr>';
         });
 
         form.addEventListener('submit', async (event) => {
@@ -183,9 +166,6 @@
                     const pedido = pedidoSeleccionado || filaPorProducto;
 
                     if (pedido) {
-                        const pedidoId = pedido.dataset.pedido;
-                        pedidosGuardados[pedidoId] = { datos, hora };
-                        localStorage.setItem('pedidosInventario', JSON.stringify(pedidosGuardados));
                         marcarPedidoActualizado(datos, hora, pedido);
                     }
                 }

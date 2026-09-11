@@ -8,3 +8,4 @@
 | P04 | Campos Faltantes | POST | `{"id_restaurante": 1}` | 400 Bad Request | 400 Bad Request | Parámetros incompletos. Se requiere id_restaurante, id_producto y cantidad. | **APROBADO** | `P04_campos_faltantes_400.png` |
 | P05 | Cantidad Inválida | POST | `{"id_restaurante": 1, "id_producto": 101, "cantidad": -5}` | 400 Bad Request | 400 Bad Request | La cantidad a actualizar debe ser mayor a cero. | **APROBADO** | `P05_cantidad_invalida_400.png` |
 | P06 | Datos No Numéricos | POST | `{"id_restaurante": "abc", "id_producto": 101, "cantidad": 2}` | 400 Bad Request | 400 Bad Request | Los valores ingresados deben ser numéricos. | **APROBADO** | `P06_datos_no_numericos_400.png` |
+| P07 | Stock Insuficiente | POST | `{"id_restaurante": 1, "id_producto": 101, "cantidad": 21}` | 400 Bad Request | 400 Bad Request | La cantidad solicitada supera el stock disponible. | **APROBADO** | `P07_stock_insuficiente_400.png` |
