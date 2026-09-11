@@ -41,6 +41,12 @@
         </section>
 
         <section class="panel">
+            <div class="section-heading form-section-heading">
+                <div>
+                    <p class="eyebrow">Verificación de inventario</p>
+                    <h2>Actualizar inventario</h2>
+                </div>
+            </div>
             <form id="inventario-form">
                 <div class="form-grid">
                     <label>
