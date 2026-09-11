@@ -66,6 +66,22 @@ if ($cantidad <= 0) {
 
 // Respuesta exitosa (Simulación de actualización en stock)
 $stock_actual = 20;
+
+// Evitar que el inventario quede con stock negativo
+if ($cantidad > $stock_actual) {
+    http_response_code(400);
+    echo json_encode([
+        "status" => "error",
+        "code" => 400,
+        "mensaje" => "La cantidad solicitada supera el stock disponible.",
+        "datos" => [
+            "stock_disponible" => $stock_actual,
+            "cantidad_solicitada" => (int)$cantidad
+        ]
+    ]);
+    exit;
+}
+
 $nuevo_stock = $stock_actual - (int)$cantidad;
 
 http_response_code(200);
