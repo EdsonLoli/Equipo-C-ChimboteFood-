@@ -84,6 +84,10 @@ h1 {
     margin-bottom: 24px;
 }
 
+.create-order-panel {
+    margin-bottom: 24px;
+}
+
 .section-heading {
     display: flex;
     align-items: flex-start;
@@ -96,11 +100,49 @@ h1 {
     margin-bottom: 0;
 }
 
-.record-count {
-    color: var(--muted);
+.record-summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
     font-family: 'Segoe UI', Tahoma, sans-serif;
-    font-size: 0.85rem;
+    font-size: 0.78rem;
+}
+
+.summary-item {
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 7px 10px;
+    background: #f5f7f4;
+    color: var(--muted);
     white-space: nowrap;
+}
+
+.summary-item strong {
+    margin-right: 3px;
+    color: var(--ink);
+    font-size: 0.95rem;
+}
+
+.summary-pending {
+    border-color: #f3df9d;
+    background: #fff8df;
+    color: #805d00;
+}
+
+.summary-pending strong {
+    color: #805d00;
+}
+
+.summary-updated {
+    border-color: #bfe5ce;
+    background: #eef9f2;
+    color: var(--success);
+}
+
+.summary-updated strong {
+    color: var(--success);
 }
 
 .table-wrapper {
@@ -110,9 +152,49 @@ h1 {
 table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 680px;
+    min-width: 920px;
+    table-layout: fixed;
     font-family: 'Segoe UI', Tahoma, sans-serif;
     font-size: 0.86rem;
+}
+
+th:nth-child(1),
+td:nth-child(1) {
+    width: 100px;
+}
+
+th:nth-child(2),
+td:nth-child(2),
+th:nth-child(3),
+td:nth-child(3),
+th:nth-child(4),
+td:nth-child(4) {
+    width: 105px;
+    text-align: center;
+}
+
+th:nth-child(5),
+td:nth-child(5) {
+    width: 125px;
+    text-align: center;
+}
+
+th:nth-child(6),
+td:nth-child(6) {
+    width: 170px;
+    text-align: center;
+}
+
+th:nth-child(7),
+td:nth-child(7) {
+    width: 165px;
+    text-align: center;
+}
+
+th:nth-child(8),
+td:nth-child(8) {
+    width: 90px;
+    text-align: center;
 }
 
 th {
@@ -129,6 +211,7 @@ td {
     padding: 14px 12px;
     border-bottom: 1px solid #e8eeea;
     color: var(--ink);
+    vertical-align: middle;
 }
 
 tbody tr:last-child td {
@@ -151,10 +234,12 @@ tbody tr:last-child td {
 }
 
 .table-action {
+    min-width: 140px;
     padding: 8px 11px;
     background: transparent;
     color: var(--accent);
     font-size: 0.8rem;
+    white-space: nowrap;
 }
 
 .table-action:hover {
@@ -170,6 +255,35 @@ tbody tr:last-child td {
 
 .table-action:disabled:hover {
     transform: none;
+}
+
+.actions-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.delete-action {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    background: transparent;
+    color: var(--danger);
+    font-family: 'Segoe UI Symbol', 'Segoe UI', sans-serif;
+    font-size: 1.15rem;
+    line-height: 1;
+}
+
+.trash-icon {
+    display: block;
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+}
+
+.delete-action:hover {
+    background: #f9e1df;
+    color: #852d2d;
 }
 
 .order-time {
